@@ -10,9 +10,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paradoxo.voicerecognitionmediapipe.ui.category.CategoryScreen
 import com.paradoxo.voicerecognitionmediapipe.ui.theme.MediaPipeVoiceRecognitionTheme
+import com.paradoxo.voicerecognitionmediapipe.voicedetection.AudioClassifierViewModel
+import androidx.compose.runtime.getValue
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,9 +26,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MediaPipeVoiceRecognitionTheme {
+                val viewModel = viewModel<AudioClassifierViewModel>()
+                val state by viewModel.uiState.collectAsStateWithLifecycle()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     CategoryScreen(
-                        emptyList(),
+                        state.results,
                         Modifier.padding(innerPadding)
                     )
                 }
