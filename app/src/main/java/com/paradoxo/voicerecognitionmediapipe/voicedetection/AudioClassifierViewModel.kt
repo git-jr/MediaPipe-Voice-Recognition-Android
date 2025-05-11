@@ -20,6 +20,12 @@ class AudioClassifierViewModel @Inject constructor(
     var uiState = _uiState.asStateFlow()
 
     init {
+        if (_uiState.value.micPermissionGranted) {
+            startClassification()
+        }
+    }
+
+    fun startClassification() {
         audioClassifierHelper.initClassifier()
         setResultListener()
     }
@@ -76,5 +82,23 @@ class AudioClassifierViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         audioClassifierHelper.stopAudioClassification()
+    }
+
+    fun setPermissionGranted(granted: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            micPermissionGranted = granted
+        )
+
+        if (granted) {
+            startClassification()
+        } else {
+            requestMicPermission()
+        }
+    }
+
+    fun requestMicPermission() {
+        _uiState.value = _uiState.value.copy(
+            requestMicPermission = true
+        )
     }
 }

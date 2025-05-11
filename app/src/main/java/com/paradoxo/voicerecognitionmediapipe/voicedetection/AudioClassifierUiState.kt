@@ -8,6 +8,8 @@ data class AudioClassifierUiState(
     val palmeirasDetected: Boolean = false,
     val coffeeDetected: Boolean = false,
     val netflixDetected: Boolean = false,
+    val micPermissionGranted: Boolean = false,
+    val requestMicPermission : Boolean = false,
 )
 
 enum class AudioClassifierEnum {
