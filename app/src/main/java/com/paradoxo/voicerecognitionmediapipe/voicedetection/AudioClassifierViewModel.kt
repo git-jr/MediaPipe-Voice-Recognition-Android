@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mediapipe.tasks.components.containers.Category
+import com.paradoxo.voicerecognitionmediapipe.utils.PermissionUtils
 import com.paradoxo.voicerecognitionmediapipe.voicedetection.AudioClassifierHelper.ResultBundle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,15 +14,21 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AudioClassifierViewModel @Inject constructor(
-    private val audioClassifierHelper: AudioClassifierHelper
+    private val audioClassifierHelper: AudioClassifierHelper,
+    private val permissionUtils: PermissionUtils,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AudioClassifierUiState())
     var uiState = _uiState.asStateFlow()
 
     init {
+        _uiState.value = _uiState.value.copy(
+            micPermissionGranted = permissionUtils.microphonePermissionsGranted()
+        )
         if (_uiState.value.micPermissionGranted) {
             startClassification()
+        } else {
+            requestMicPermission()
         }
     }
 
