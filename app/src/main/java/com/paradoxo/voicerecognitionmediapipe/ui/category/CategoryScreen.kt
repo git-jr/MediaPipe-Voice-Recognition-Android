@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.mediapipe.tasks.components.containers.Category
+import com.paradoxo.voicerecognitionmediapipe.R
 import kotlin.collections.forEach
 
 
@@ -93,5 +94,14 @@ fun getColorForCategory(category: Category): Color {
         2 -> Color(0xFF15FF2D)
         3 -> Color(0xFF49C2FF)
         else -> Color.Yellow
+    }
+}
+
+fun getImageForCategory(index: Int): Int {
+    return when (index) {
+        0 -> R.drawable.coffee
+        1 -> R.drawable.netflix
+        2 -> R.drawable.palmeiras
+        else -> R.drawable.transparent_bg
     }
 }

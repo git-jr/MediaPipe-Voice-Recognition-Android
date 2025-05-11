@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mediapipe.tasks.components.containers.Category
+import com.paradoxo.voicerecognitionmediapipe.R
 import com.paradoxo.voicerecognitionmediapipe.utils.PermissionUtils
 import com.paradoxo.voicerecognitionmediapipe.voicedetection.AudioClassifierHelper.ResultBundle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +33,7 @@ class AudioClassifierViewModel @Inject constructor(
         }
     }
 
-    fun startClassification() {
+    private fun startClassification() {
         audioClassifierHelper.initClassifier()
         setResultListener()
     }
@@ -47,30 +48,11 @@ class AudioClassifierViewModel @Inject constructor(
                             _uiState.value = _uiState.value.copy(
                                 results = categoryList,
                             )
-                            Log.d(
-                                "AudioClassifierViewModel",
-                                "Categorais: $categoryList"
-                            )
+                            Log.d("AudioClassifierViewModel", "Categorais: $categoryList")
 
-                            val detectionThresholds = mapOf(
-                                "Palmeiras" to 0.99f,
-                                "Coffe" to 0.99f,
-                                "Netflix" to 0.99f
-                            )
+                            checkDetectedCategories(categoryList)
 
-                            val detectedStates =
-                                detectionThresholds.map { (categoryName, threshold) ->
-                                    val category = categoryList.find {
-                                        it.categoryName().contains(categoryName)
-                                    }
-                                    categoryName to (category != null && category.score() > threshold)
-                                }.toMap()
-
-                            _uiState.value = _uiState.value.copy(
-                                palmeirasDetected = detectedStates["Palmeiras"] == true,
-                                coffeeDetected = detectedStates["Coffe"] == true,
-                                netflixDetected = detectedStates["Netflix"] == true,
-                            )
+                            getAdByCategory(categoryList)
                         }
 
                 }
@@ -84,6 +66,41 @@ class AudioClassifierViewModel @Inject constructor(
             }
         }
         audioClassifierHelper.setListener(resultListener)
+    }
+
+    private fun checkDetectedCategories(categoryList: List<Category>) {
+        val detectionThresholds = mapOf(
+            "Palmeiras" to 0.99f,
+            "Coffe" to 0.99f,
+            "Netflix" to 0.99f
+        )
+
+        val detectedStates =
+            detectionThresholds.map { (categoryName, threshold) ->
+                val category = categoryList.find {
+                    it.categoryName().contains(categoryName)
+                }
+                categoryName to (category != null && category.score() > threshold)
+            }.toMap()
+
+        _uiState.value = _uiState.value.copy(
+            palmeirasDetected = detectedStates["Palmeiras"] == true,
+            coffeeDetected = detectedStates["Coffe"] == true,
+            netflixDetected = detectedStates["Netflix"] == true,
+        )
+    }
+
+    private fun getAdByCategory(categoryList: List<Category>) {
+        val category = categoryList.firstOrNull()
+        if (category != null && category.score() > 0.5) {
+            _uiState.value = _uiState.value.copy(
+                imageAdId = category.index()
+            )
+        } else {
+            _uiState.value = _uiState.value.copy(
+                imageAdId = R.drawable.transparent_bg
+            )
+        }
     }
 
     override fun onCleared() {
@@ -103,7 +120,7 @@ class AudioClassifierViewModel @Inject constructor(
         }
     }
 
-    fun requestMicPermission() {
+    private fun requestMicPermission() {
         _uiState.value = _uiState.value.copy(
             requestMicPermission = true
         )
