@@ -89,19 +89,19 @@ fun CategoryBar(category: Category, maxScore: Float) {
 
 fun getColorForCategory(category: Category): Color {
     return when (category.index()) {
-        0 -> Color(0xFF8E24AA)
-        1 -> Color(0xFFE53935)
-        2 -> Color(0xFF15FF2D)
-        3 -> Color(0xFF49C2FF)
+        0 -> Color(0xFFFFC107)
+        1 -> Color(0xFFFF2420)
+        2 -> Color(0xFF009688)
+        3 -> Color(0xFF8E24AA)
         else -> Color.Yellow
     }
 }
 
 fun getImageForCategory(index: Int): Int {
     return when (index) {
-        0 -> R.drawable.coffee
-        1 -> R.drawable.netflix
-        2 -> R.drawable.palmeiras
-        else -> R.drawable.transparent_bg
+        0 -> R.drawable.banner_coffee
+        1 -> R.drawable.banner_netflix
+        2 -> R.drawable.banner_palmeiras
+        else -> R.drawable.banner_defaut
     }
 }
